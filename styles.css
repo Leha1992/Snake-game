@@ -1,0 +1,18 @@
+.container {
+  margin: 100px auto;
+  background-color: gainsboro;
+  position: relative;
+}
+
+.food,
+.snake-item {
+  position: absolute;
+  background-color: green;
+  box-sizing: border-box;
+  border: 1px solid greenyellow;
+}
+
+.food {
+  background-color: red;
+  z-index: 1;
+}
