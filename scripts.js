@@ -23,7 +23,6 @@ const field = new Field({
 field.renderField();
 
 //food class
-
 class Food {
   constructor(options) {
     this.options = options;
@@ -57,7 +56,6 @@ class Snake {
   constructor(options) {
     this.options = options;
     this.snakeItems = [];
-    this.headCoordination = [];
   }
 
   initSnake() {
@@ -69,18 +67,20 @@ class Snake {
 
   renderSnake() {
     let length = this.options.snake.defaultSize;
+    let randomPositionY = Math.floor(Math.random() * field.options.sizeY);
     for (let i = 0; i < length; i++) {
       let snakeItem = document.createElement('div');
       snakeItem.className = 'snake-item';
       snakeItem.style.width = this.options.snake.widthItem + 'px';
       snakeItem.style.height = this.options.snake.heightItem + 'px';
-      snakeItem.style.top = 0;
+      snakeItem.style.top =
+        randomPositionY * this.options.snake.widthItem + 1 + 'px';
       snakeItem.style.left = i * this.options.snake.widthItem + 'px';
 
       this.snakeItems.push({
         element: snakeItem,
         positionX: i,
-        positionY: 0,
+        positionY: randomPositionY,
         direction: this.options.directionDefault
       });
 
@@ -142,6 +142,7 @@ class Snake {
   eat() {
     let head = this.snakeItems[this.snakeItems.length - 1].element;
     let foodItem = document.querySelector('.food');
+
     if (foodItem) {
       if (
         head.style.left === foodItem.style.left &&
@@ -150,12 +151,18 @@ class Snake {
         foodItem.remove();
         this.addTail();
         food.renderFood();
+        if (this.options.speed > 100) {
+          this.options.speed = this.options.speed - 3;
+        } else if (this.options.speed < 50) {
+          this.options.speed = this.options.speed - 1;
+        }
       }
     }
   }
 
   move() {
     this.eat();
+
     for (let i = 0; i < this.snakeItems.length; i++) {
       switch (this.snakeItems[i].direction) {
         case 'right':
@@ -182,22 +189,14 @@ class Snake {
           throw new Error('No such direction');
       }
     }
+
     for (let i = 0; i < this.snakeItems.length - 1; i++) {
       this.snakeItems[i].direction = this.snakeItems[i + 1].direction;
     }
   }
 
   checkEndGame() {
-    let headSnake = this.snakeItems[this.snakeItems.length - 1].element;
-
-    for (let i = 0; i < this.snakeItems.length - 1; i++) {
-      if (
-        headSnake.style.left === this.snakeItems[i].element.style.left &&
-        headSnake.style.top === this.snakeItems[i].element.style.top
-      ) {
-        return true;
-      }
-    }
+    let headSnake = this.snakeItems[this.snakeItems.length - 1];
 
     if (
       headSnake.positionX === field.options.cellWidth ||
@@ -207,6 +206,17 @@ class Snake {
     ) {
       return true;
     }
+
+    for (let i = 0; i < this.snakeItems.length - 1; i++) {
+      if (
+        headSnake.element.style.left ===
+          this.snakeItems[i].element.style.left &&
+        headSnake.element.style.top === this.snakeItems[i].element.style.top
+      ) {
+        return true;
+      }
+    }
+
     return false;
   }
   moveFunction() {
