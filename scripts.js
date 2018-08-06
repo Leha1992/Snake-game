@@ -22,6 +22,36 @@ const field = new Field({
 
 field.renderField();
 
+//food class
+
+class Food {
+  constructor(options) {
+    this.options = options;
+  }
+
+  renderFood() {
+    let foodItem = document.createElement('div');
+    foodItem.className = 'food';
+    foodItem.style.width = this.options.foodWidth + 'px';
+    foodItem.style.height = this.options.foodHeight + 'px';
+    foodItem.style.left =
+      Math.floor(Math.random() * field.options.sizeX) *
+        field.options.cellWidth +
+      'px';
+    foodItem.style.top =
+      Math.floor(Math.random() * field.options.sizeY) *
+        field.options.cellHeight +
+      'px';
+    field.element.appendChild(foodItem);
+  }
+}
+const food = new Food({
+  foodWidth: 20,
+  foodHeight: 20
+});
+
+food.renderFood();
+
 // snake class
 class Snake {
   constructor(options) {
@@ -81,7 +111,51 @@ class Snake {
     });
   }
 
+  addTail() {
+    let tail = document.createElement('div');
+    tail.className = 'snake-item';
+    tail.style.width = this.options.snake.widthItem + 'px';
+    tail.style.height = this.options.snake.heightItem + 'px';
+    tail.style.top = this.snakeItems[0].element.style.top;
+    tail.style.left = this.snakeItems[0].element.style.left;
+
+    this.snakeItems.unshift({
+      element: tail,
+      direction: this.snakeItems[0].direction,
+      positionX:
+        this.snakeItems[0].direction === 'right'
+          ? this.snakeItems[0].positionX - 1
+          : this.snakeItems[0].direction === 'left'
+            ? this.snakeItems[0].positionX + 1
+            : this.snakeItems[0].positionX,
+      positionY:
+        this.snakeItems[0].direction === 'top'
+          ? this.snakeItems[0].positionY + 1
+          : this.snakeItems[0].direction === 'bottom'
+            ? this.snakeItems[0].positionY - 1
+            : this.snakeItems[0].positionY
+    });
+
+    field.element.appendChild(tail);
+  }
+
+  eat() {
+    let head = this.snakeItems[this.snakeItems.length - 1].element;
+    let foodItem = document.querySelector('.food');
+    if (foodItem) {
+      if (
+        head.style.left === foodItem.style.left &&
+        head.style.top === foodItem.style.top
+      ) {
+        foodItem.remove();
+        this.addTail();
+        food.renderFood();
+      }
+    }
+  }
+
   move() {
+    this.eat();
     for (let i = 0; i < this.snakeItems.length; i++) {
       switch (this.snakeItems[i].direction) {
         case 'right':
@@ -98,7 +172,6 @@ class Snake {
           this.snakeItems[i].positionY++;
           this.snakeItems[i].element.style.top =
             this.snakeItems[i].positionY * this.options.snake.widthItem + 'px';
-
           break;
         case 'top':
           this.snakeItems[i].positionY--;
@@ -115,7 +188,17 @@ class Snake {
   }
 
   checkEndGame() {
-    let headSnake = this.snakeItems[this.snakeItems.length - 1];
+    let headSnake = this.snakeItems[this.snakeItems.length - 1].element;
+
+    for (let i = 0; i < this.snakeItems.length - 1; i++) {
+      if (
+        headSnake.style.left === this.snakeItems[i].element.style.left &&
+        headSnake.style.top === this.snakeItems[i].element.style.top
+      ) {
+        return true;
+      }
+    }
+
     if (
       headSnake.positionX === field.options.cellWidth ||
       headSnake.positionX < 0 ||
@@ -138,7 +221,7 @@ class Snake {
 
 const snake = new Snake({
   snake: {
-    defaultSize: 10,
+    defaultSize: 3,
     widthItem: 20,
     heightItem: 20
   },
@@ -147,43 +230,3 @@ const snake = new Snake({
 });
 
 snake.initSnake();
-
-//food class
-
-class Food {
-  constructor(options) {
-    this.options = options;
-  }
-
-  renderFood() {
-    let foodItem = document.createElement('div');
-    foodItem.className = 'food';
-    foodItem.style.width = this.options.foodWidth + 'px';
-    foodItem.style.height = this.options.foodHeight + 'px';
-    foodItem.style.left = this.options.positionX + 'px';
-    foodItem.style.top = this.options.positionY + 'px';
-    console.log(foodItem.style.top);
-    console.log(foodItem.style.left);
-    field.element.appendChild(foodItem);
-
-    for (let i = 0; i < snake.snakeItems.length; i++) {
-      if (
-        snake.snakeItems[i].element.style.left === foodItem.style.left ||
-        snake.snakeItems[i].element.style.top === foodItem.style.top
-      ) {
-        this.renderFood();
-      }
-      return;
-    }
-  }
-}
-const food = new Food({
-  foodWidth: 20,
-  foodHeight: 20,
-  positionX:
-    Math.floor(Math.random() * field.options.sizeX) * field.options.cellWidth,
-  positionY:
-    Math.floor(Math.random() * field.options.sizeY) * field.options.cellHeight
-});
-
-food.renderFood();
