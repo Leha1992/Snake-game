@@ -5,6 +5,10 @@
   overflow: hidden;
 }
 
+.score {
+  text-align: center;
+}
+
 .food,
 .snake-item {
   position: absolute;
@@ -20,4 +24,21 @@
 .food {
   background-color: red;
   z-index: 1;
+}
+
+.new-game {
+  padding: 5px 10px;
+  color: #fff;
+  min-width: 100px;
+  background-color: dodgerblue;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: block;
+  margin: 0 auto;
+}
+
+.new-game:hover {
+  background-color: blue;
 }

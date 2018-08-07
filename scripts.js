@@ -2,54 +2,17 @@ class Field {
   constructor(options) {
     this.options = options;
     this.element = this.options.element;
+    this.score = 0;
   }
 
   renderField() {
+    document.querySelector('.score').textContent = 'Score: ' + this.score;
     this.element.style.width =
       this.options.cellWidth * this.options.sizeX + 'px';
     this.element.style.height =
       this.options.cellHeight * this.options.sizeY + 'px';
   }
 }
-
-const field = new Field({
-  sizeX: 20,
-  sizeY: 20,
-  cellWidth: 20,
-  cellHeight: 20,
-  element: document.getElementById('container')
-});
-
-field.renderField();
-
-//food class
-class Food {
-  constructor(options) {
-    this.options = options;
-  }
-
-  renderFood() {
-    let foodItem = document.createElement('div');
-    foodItem.className = 'food';
-    foodItem.style.width = this.options.foodWidth + 'px';
-    foodItem.style.height = this.options.foodHeight + 'px';
-    foodItem.style.left =
-      Math.floor(Math.random() * field.options.sizeX) *
-        field.options.cellWidth +
-      'px';
-    foodItem.style.top =
-      Math.floor(Math.random() * field.options.sizeY) *
-        field.options.cellHeight +
-      'px';
-    field.element.appendChild(foodItem);
-  }
-}
-const food = new Food({
-  foodWidth: 20,
-  foodHeight: 20
-});
-
-food.renderFood();
 
 // snake class
 class Snake {
@@ -148,6 +111,8 @@ class Snake {
         head.style.left === foodItem.style.left &&
         head.style.top === foodItem.style.top
       ) {
+        document.querySelector('.score').textContent =
+          'Score: ' + ++field.score;
         foodItem.remove();
         this.addTail();
         food.renderFood();
@@ -225,18 +190,77 @@ class Snake {
       setTimeout(() => {
         this.moveFunction();
       }, this.options.speed);
+    } else {
+      alert('Game Over!');
     }
   }
 }
 
-const snake = new Snake({
+//food class
+class Food {
+  constructor(options) {
+    this.options = options;
+  }
+
+  renderFood() {
+    let randomX =
+      Math.floor(Math.random() * field.options.sizeX) * field.options.cellWidth;
+    let randomY =
+      Math.floor(Math.random() * field.options.sizeY) *
+      field.options.cellHeight;
+    let foodItem = document.createElement('div');
+    foodItem.className = 'food';
+    foodItem.style.width = this.options.foodWidth + 'px';
+    foodItem.style.height = this.options.foodHeight + 'px';
+    foodItem.style.left = randomX + 'px';
+    foodItem.style.top = randomY + 'px';
+
+    for (let i = 0; i < snake.snakeItems.length; i++) {
+      if (
+        snake.snakeItems[i].element.style.left === foodItem.style.left &&
+        snake.snakeItems[i].element.style.top === foodItem.style.top
+      ) {
+        console.log('ok');
+        this.renderFood();
+        return;
+      }
+    }
+    field.element.appendChild(foodItem);
+  }
+}
+
+let field = new Field({
+  sizeX: 20,
+  sizeY: 20,
+  cellWidth: 20,
+  cellHeight: 20,
+  element: document.getElementById('container')
+});
+
+let snake = new Snake({
   snake: {
     defaultSize: 3,
     widthItem: 20,
     heightItem: 20
   },
-  directionDefault: 'right',
-  speed: 200
+  directionDefault: 'right'
 });
 
-snake.initSnake();
+let food = new Food({
+  foodWidth: 20,
+  foodHeight: 20
+});
+
+window.onload = () => {
+  field.renderField();
+  document.querySelector('.new-game').addEventListener('click', () => {
+    document.getElementById('container').innerHTML = '';
+    document.querySelector('.score').innerHTML = '';
+    snake.snakeItems = [];
+    field.score = 0;
+    snake.options.speed = 200;
+    field.renderField();
+    snake.initSnake();
+    food.renderFood();
+  });
+};
