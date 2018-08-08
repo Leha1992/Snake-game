@@ -32,6 +32,7 @@ class Snake {
   constructor(options) {
     this.options = options;
     this.snakeItems = [];
+    this.isDelay = true;
   }
 
   initSnake() {
@@ -67,20 +68,45 @@ class Snake {
   chageDirection() {
     document.addEventListener('keydown', e => {
       let head = this.snakeItems[this.snakeItems.length - 1];
-
       for (let i = 0; i < this.snakeItems.length; i++) {
         switch (e.keyCode) {
           case 40:
-            if (head.direction !== 'top') head.direction = 'bottom';
+            if (this.isDelay) {
+              if (head.direction !== 'top') head.direction = 'bottom';
+              this.isDelay = false;
+              setTimeout(() => {
+                this.isDelay = true;
+              }, this.options.speed);
+            }
+
             break;
           case 39:
-            if (head.direction !== 'left') head.direction = 'right';
+            if (this.isDelay) {
+              if (head.direction !== 'left') head.direction = 'right';
+              this.isDelay = false;
+              setTimeout(() => {
+                this.isDelay = true;
+              }, this.options.speed);
+            }
+
             break;
           case 38:
-            if (head.direction !== 'bottom') head.direction = 'top';
+            if (this.isDelay) {
+              if (head.direction !== 'bottom') head.direction = 'top';
+              this.isDelay = false;
+              setTimeout(() => {
+                this.isDelay = true;
+              }, this.options.speed);
+            }
             break;
           case 37:
-            if (head.direction !== 'right') head.direction = 'left';
+            if (this.isDelay) {
+              if (head.direction !== 'right') head.direction = 'left';
+              this.isDelay = false;
+              setTimeout(() => {
+                this.isDelay = true;
+              }, this.options.speed);
+            }
             break;
           default:
         }
@@ -130,9 +156,9 @@ class Snake {
         foodItem.remove();
         this.addTail();
         food.renderFood();
-        if (this.options.speed > 100) {
+        if (this.options.speed <= 200 && this.options.speed > 100) {
           this.options.speed = this.options.speed - 3;
-        } else if (this.options.speed < 50) {
+        } else if (this.options.speed > 50 && this.options.speed <= 100) {
           this.options.speed = this.options.speed - 1;
         }
       }
