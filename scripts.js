@@ -11,7 +11,20 @@ class Field {
       this.options.cellWidth * this.options.sizeX + 'px';
     this.element.style.height =
       this.options.cellHeight * this.options.sizeY + 'px';
+    for (let i = 0; i <= this.options.sizeX; i++) {
+      for (let innerIndex = 0; innerIndex <= this.options.sizeY; innerIndex++) {
+        let cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.style.width = this.options.cellWidth + 'px';
+        cell.style.height = this.options.cellHeight + 'px';
+        this.element.appendChild(cell);
+      }
+    }
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // snake class
@@ -54,6 +67,7 @@ class Snake {
   chageDirection() {
     document.addEventListener('keydown', e => {
       let head = this.snakeItems[this.snakeItems.length - 1];
+
       for (let i = 0; i < this.snakeItems.length; i++) {
         switch (e.keyCode) {
           case 40:
@@ -127,7 +141,6 @@ class Snake {
 
   move() {
     this.eat();
-
     for (let i = 0; i < this.snakeItems.length; i++) {
       switch (this.snakeItems[i].direction) {
         case 'right':
@@ -184,10 +197,14 @@ class Snake {
 
     return false;
   }
+
   moveFunction() {
     if (!this.checkEndGame()) {
       this.move();
       setTimeout(() => {
+        if (restartGame) {
+          return;
+        }
         this.moveFunction();
       }, this.options.speed);
     } else {
@@ -220,7 +237,6 @@ class Food {
         snake.snakeItems[i].element.style.left === foodItem.style.left &&
         snake.snakeItems[i].element.style.top === foodItem.style.top
       ) {
-        console.log('ok');
         this.renderFood();
         return;
       }
@@ -253,7 +269,10 @@ let food = new Food({
 
 window.onload = () => {
   field.renderField();
-  document.querySelector('.new-game').addEventListener('click', () => {
+  document.querySelector('.new-game').addEventListener('click', async () => {
+    restartGame = true;
+    await sleep(150);
+
     document.getElementById('container').innerHTML = '';
     document.querySelector('.score').innerHTML = '';
     snake.snakeItems = [];
@@ -262,5 +281,6 @@ window.onload = () => {
     field.renderField();
     snake.initSnake();
     food.renderFood();
+    restartGame = false;
   });
 };

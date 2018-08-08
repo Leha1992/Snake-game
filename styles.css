@@ -3,10 +3,18 @@
   background-color: gainsboro;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .score {
   text-align: center;
+}
+
+.cell {
+  border: 1px solid #fff;
+  background-color: gainsboro;
+  box-sizing: border-box;
 }
 
 .food,
@@ -14,7 +22,6 @@
   position: absolute;
   background-color: green;
   box-sizing: border-box;
-  border: 1px solid greenyellow;
 }
 
 .snake-item {
@@ -26,6 +33,10 @@
   z-index: 1;
 }
 
+.buttons {
+  text-align: center;
+}
+
 .new-game {
   padding: 5px 10px;
   color: #fff;
@@ -35,8 +46,6 @@
   border-radius: 3px;
   cursor: pointer;
   transition: all 0.3s;
-  display: block;
-  margin: 0 auto;
 }
 
 .new-game:hover {
