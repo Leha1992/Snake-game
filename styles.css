@@ -7,13 +7,14 @@
   flex-wrap: wrap;
 }
 
-.cell {
-  box-sizing: border-box;
-  border: 1px solid #fff;
-}
-
 .score {
   text-align: center;
+}
+
+.cell {
+  border: 1px solid #fff;
+  background-color: gainsboro;
+  box-sizing: border-box;
 }
 
 .food,
