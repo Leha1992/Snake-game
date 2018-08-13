@@ -23,10 +23,6 @@ class Field {
   }
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 // snake class
 class Snake {
   constructor(options) {
@@ -295,18 +291,18 @@ let food = new Food({
 
 window.onload = () => {
   field.renderField();
-  document.querySelector('.new-game').addEventListener('click', async () => {
+  document.querySelector('.new-game').addEventListener('click', () => {
     restartGame = true;
-    await sleep(150);
-
-    document.getElementById('container').innerHTML = '';
-    document.querySelector('.score').innerHTML = '';
-    snake.snakeItems = [];
-    field.score = 0;
-    snake.options.speed = 200;
-    field.renderField();
-    snake.initSnake();
-    food.renderFood();
-    restartGame = false;
+    setTimeout(() => {
+      document.getElementById('container').innerHTML = '';
+      document.querySelector('.score').innerHTML = '';
+      snake.snakeItems = [];
+      field.score = 0;
+      snake.options.speed = 200;
+      field.renderField();
+      snake.initSnake();
+      food.renderFood();
+      restartGame = false;
+    }, 150);
   });
 };
